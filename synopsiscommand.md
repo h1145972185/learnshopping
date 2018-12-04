@@ -66,4 +66,10 @@
 ##### git rm -f * #强制删除所有文件
 ##### git add *#跟踪新文件
 ##### git checkout -- file#取消对文件的修改（从暂存区去除file）
-##### git push origin :server#删除远端分支[推送空分支，目前等同于删除]
+##### git push origin :server#删除远端分支（推送空分支，目前等同于删除）
+##### 远程分支合并
+###### 先将分支切换到要合并的分支：git checkout dev
+###### 再将远程分支文件拉取到本地：git pull origin dev
+###### 再将分支切换到主分支：git checkout master
+###### 然后开始合并 git merge dev
+###### 再将master发布到远程仓库：git push origin master
