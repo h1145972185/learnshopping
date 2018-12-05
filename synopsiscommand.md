@@ -175,7 +175,7 @@ springMVC框架其实就是管理controller，所以扫描注解的时候只扫�
     </context>
 </generatorConfiguration>
 ```
-####@RestController和@Controller的区别
+#### @RestController和@Controller的区别
 ```
 @RestController注解相当于@ResponseBody ＋ @Controller合在一起的作用
 
@@ -190,7 +190,7 @@ springMVC框架其实就是管理controller，所以扫描注解的时候只扫�
 ##### 自动生成数据库交互代码
 ##### 1、pom中配置
 ##### 2、配置generotorConfig.xml
-### 搭建ssm框架
+##### 搭建ssm框架
 ##### 1、pom.xml
 ##### 2、添加配置文件
 ##### 1）spring配置文件
