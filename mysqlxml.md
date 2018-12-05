@@ -4,7 +4,7 @@
 create table neuedu_user(
 `id`       int(11)      not null auto_increment comment'用户id',
 `username` varchar(50)  not null comment'用户名',
-`assword`  varchar(50)  not null comment'密码',
+`password`  varchar(50)  not null comment'密码',
 `email`    varchar(50)  not null comment'邮箱',
 `phone`    varchar(11)  not null comment'联系方式',
 `question` varchar(100) not null comment'密保问题',
