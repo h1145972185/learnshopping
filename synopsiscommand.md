@@ -86,3 +86,76 @@ Dao层(跟数据库做交互,数据库的增删改查)
 
 上层依赖下一层
 ```
+### Mybatis-generator插件
+##### mybatis-generator是一款在使用mybatis框架时，自动生成model，dao和mapper的工具，很大程度上减少了业务开发人员的手动编码时间
+##### 本人使用的是maven构建，首先需要在pom.xml文件添加mybatis-generator依赖包以及插件
+##### dependencies中添加
+```
+<dependency>
+    <groupId>org.mybatis.generator</groupId>
+    <artifactId>mybatis-generator-core</artifactId>
+    <version>1.3.2</version>
+</dependency>
+```
+##### 在build的plugins中添加：
+```
+<plugin>
+    <groupId>org.mybatis.generator</groupId>
+    <artifactId>mybatis-generator-maven-plugin</artifactId>
+    <version>1.3.2</version>
+    <configuration>
+　　　　　　　<!-- mybatis用于生成代码的配置文件 -->
+    　　<configurationFile>src/main/resources/generatorConfig.xml</configurationFile>
+        <verbose>true</verbose>
+        <overwrite>true</overwrite>
+    </configuration>
+</plugin>
+```
+##### generatorConfig.xml文件介绍
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+ PUBLIC " -//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+ "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <classPathEntry
+            location="/Users/yehaixiao/Maven/mysql/mysql-connector-java/5.1.30/mysql-connector-java.jar"/>
+    <context id="my" targetRuntime="MyBatis3">
+        <commentGenerator>
+            <property name="suppressDate" value="false"/>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+　　　　 <!-- mysql数据库连接 -->　
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/test" userId="root"
+                        password="******"/>
+
+　　　　　<!-- 生成model实体类文件位置 -->
+        <javaModelGenerator targetPackage="com.ssmgen.demo.model"
+                            targetProject="/Users/yehaixiao/asiainfo/ssm-demo/src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+　　　　　<!-- 生成mapper.xml配置文件位置 -->
+        <sqlMapGenerator targetPackage="com.ssmgen.demo.mapper"
+                         targetProject="/Users/yehaixiao/asiainfo/ssm-demo/src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- 生成mapper接口文件位置 -->
+        <javaClientGenerator targetPackage="com.ssmgen.demo.mapper"
+                             targetProject="/Users/yehaixiao/asiainfo/ssm-demo/src/main/java" type="XMLMAPPER">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+　　　　 <!-- 需要生成的实体类对应的表名，多个实体类复制多份该配置即可 -->
+        <table tableName="TEST1" domainObjectName="Test"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+
+    </context>
+</generatorConfiguration>
+```
+### 搭建ssm框架
