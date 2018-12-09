@@ -448,3 +448,211 @@ springMVC框架其实就是管理controller，所以扫描注解的时候只扫�
 ##### 4）web.xml
 #####  3、使用框架
 
+## 2018年12月05日
+
+```
+/*
+* service层调用dao层
+* */
+//将UserServiceImpl类交给容器管理
+//标识为业务逻辑层的一个类
+@Service
+public class UserServiceImpl  implements IUserService {
+    //自动封装
+    @Autowired
+    UserInfoMapper userInfoMapper;
+    @Override
+    public int register(UserInfo userInfo) {
+      //返回int类型，表示影响了数据库的行数，返回值大于0说明成功，返回值为零表示插入不成功
+        return userInfoMapper.insert(userInfo);
+    }
+}
+```
+#### 在接收视图层数据时 注解 @RequestParam中有三个值 
+#### 其中value与页面中字段相同，required为布尔型  true时则表示value中字段的值不能为空
+#### false时表示可写可不写  defaultValue 值为字符串 当required值为false时，可以给其一个默认值
+
+
+### 用户模块
+ #### 项目中的问题
+     横向越权，纵向越权安全漏洞
+     横向越权：攻击者尝试访问与他拥有相同权限的用户的资源
+     纵向越权：低级别攻击者尝试访问高级别用户的资源
+     MD5明文加密
+     guava缓存的使用
+     高服用服务对象的设计思想及抽象封装
+     
+
+ #### 封装返回前端的高服用对象
+      class ServerResponse<T>{
+        int status;//接口返回状态码
+        T data;//封装了接口的返回数据
+        String msg;//封装错误信息
+      }
+       服务端响应前端的高复用对象
+       json返回类型{（int）status,data,msg}
+       成功返回{status,data} 失败返回{status,msg}
+       data的返回类型可以是字符串，数组，对象，数字，所以他的返回类型不确定，就用泛型
+       
+       @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+       在转json字符串的时候把空字段过滤掉
+       当对这个对象ServerResponse进行转成一个字符的时候，那些非空字段是不会进行转化的
+       
+       @JsonIgnore
+        ServerResponse转json的时候把success这个字段忽略掉
+  ### 业务逻辑      
+  #### 登录
+```  
+       1：参数的非空校验
+         <dependency>
+             <groupId>commons-lang</groupId>
+             <artifactId>commons-lang</artifactId>
+             <version>2.6</version>
+           </dependency>
+           这个依赖提供了一些常用的校验方法
+           StringUtils.isblank();
+           public static boolean isBlank(String str) {
+                   int strLen;
+                   if (str != null && (strLen = str.length()) != 0) {
+                       for(int i = 0; i < strLen; ++i) {
+                           if (!Character.isWhitespace(str.charAt(i))) {
+                               return false;
+                           }
+                       }
+           
+                       return true;
+                   } else {
+                       return true;
+                   }
+               }
+               StringUtils.isEmpty();
+               public static boolean isEmpty(String str) {
+                       return str == null || str.length() == 0;
+                   }
+                   当判断如果是一个“ ”空的字符串带空格的时候，StringUtils.isEmpty();这个方法不能判断
+       2：检查username是否存在
+       
+       3：根据用户名和密码查询
+            多个参数的时候参数类型parameterType为map
+       4：处理结果并返回  
+```   
+   
+ #### 注册
+``` 
+    1：参数的非空校验
+    2：校验用户名是否存在
+    3：校验邮箱是否存在
+    4：调用dao接口插入用户信息
+    5：返回数据
+    时间直接用mysql里面的方法now(),前端在进行注册的时间直接用时间函数就好,不用再传时间了
+    枚举：一个变量它的值时有限的，就可以定义为枚举，开关，姓名
+    密码密文应该写到注册接口，因为注册接口是往数据库里写数据
+    
+    数据库中拿到的是经过注册后得密文密码，而我们要用自己注册的明文密码进行登录，e而这时登陆的明文密码和对应的数据库中的密文密码肯定不一样，所以要对登录时的明文密码进行加密
+       购物车只有用户登录时候才能用，当要用购物车的时候就需要判断用户是否进行了登录，登录就可以直接用，没登录对他进行提醒，登录后才能使用
+       登录后信息保存在session当中
+       
+       检查用户名是否有效
+       在注册时，页面会立刻有个反馈做时时的提示防止有恶意的调用接口，用ajax 异步加载调用接口返回数据
+``` 
+ #### 忘记密码之修改密码
+```
+    1：校验username--->查询找回密码问题
+    2：前端，提交问题答案
+    3：校验答案-->修改密码 
+    
+    修改密码的时候要考虑到一个越权问题
+      横向越权：权限都是一样的，a用户去修改其他用户  
+      纵向越权：低级别用户修改高级别用户的权限
+      解决：提交答案成功的时候，服务端会给客户端返回一个值（数据），这个数据在客户端服务端都分别保存，当用户去重置密码的时候，用户端必须带上这个数据，只有拿到数据服务端校验合法了才能修改
+           所以服务端要给客户端传一个token,服务端客户端都分别保存，然后两个进行校验
+           
+    @JsonSerialize:json是个键值对往页面传对象的时候是通过，扫描类下的get方法来取值的
+           
+    UUID生成的是一个唯一的随机生成一个字符串，每次生成都是唯一的
+```    
+  #### 根据用户名查询密保问题
+```  
+      1：参数非空校验
+      2：校验username是否存在
+      3：根据username查询密保问题
+      4：返回结果
+```      
+  
+  ##### 提交问题答案
+```  
+      1：参数非空校验
+      2：校验答案：根据username,question,answer查询，看看有没有这条记录
+      3：服务端生成一个token保存并将token返回给客户端
+         String user_Token=UUID.randomUUID().toString();
+         UUID每次生成的字符串是唯一的，不会重复的
+         guava cache
+         TokenCache.put(username,user_Token);
+         缓存里用key或取，key要保证他的唯一性，key就是用户，key直接用value就可以了
+         这样就把token放到服务端的缓存里面了，同时要将token返回到客户端
+      4：返回结果
+```      
+  ##### 修改密码
+```  
+      1：参数的非空校验
+      2：校验token
+      3：更新密码
+      4：返回结果
+ ```     
+  ### 登录状态下修改密码
+```  
+      1：参数的非空校验
+      2：校验旧密码是否正确,根据用户名和旧密码查询这个用户
+      3：修改密码
+      4：返回结果
+      在控制层中要先判断是否登录
+```      
+      
+  ### 类别模块    
+  #### 1：功能介绍
+       获取节点
+       增加节点
+       修改名称
+       获取分类
+       递归子节点
+   #### 2：学习目标
+ ```
+        如何设计界封装无限层级的树状数据结构
+        递归算法的设计思想
+          递归一定要有一个结束条件，否则就成了一个死循环
+        如何处理复杂对象重排
+        重写hashcode和equals的注意事项  
+ ```
+   #### 获取品类子节点（平级）
+  ```
+      1：非空校验
+      2：根据categoryId查询类别
+      3：查询子类别
+      4：返回结果
+   ```
+   #### 增加节点
+   ```
+   非空校验
+   添加节点
+   返回结果
+   ```
+   #### 修改节点
+   ```
+      非空校验
+      根据categoryId查询类别
+      修改类别
+      返回结果
+   #### 获取当前分类id及递归子节点categoryId
+   ```
+```
+       先定义一个递归的方法
+         先查找本节点
+             set里面的集合不可重复，通过类别id判断是不是重复，要重写类别对象的equals方法，在重写equals方法前先重写hashcode方法
+                 两个类相等这两个类的hashcode一定相等，如果两个类的hashcode相等两个类不一定相等
+         查找categoryId下的子节点（平级）
+             遍历这个集合拿到这个每个子节点
+             对集合的每个节点调用当前这个递归方法
+         递归的结束语句就是 categoryList==null&&categoryList.size()<=0
+       1参数的非空校验
+       2查询
+       ```
