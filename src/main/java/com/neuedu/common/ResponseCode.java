@@ -17,8 +17,8 @@ public enum  ResponseCode {
     PASSWORD_ERROR(10,"修改失败"),
     EXISTS_TOKEN(11,"token不存在"),
     TOKEN_ERROR(12,"token不一致"),
-    NOT_AUTHORITY(13,"没有权限")
-
+    NOT_AUTHORITY(13,"没有权限"),
+    NEED_LOGIN(14,"用户不能为空")
     ;
     private int status;
     private  String msg;

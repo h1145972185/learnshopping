@@ -3,7 +3,6 @@ package com.neuedu.controller.manage;
 
 import com.neuedu.common.Const;
 import com.neuedu.common.ServerResponse;
-import com.neuedu.pojo.UserInfo;
 import com.neuedu.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,10 +28,11 @@ public class ManageController {
         //判断登陆接口是否连接成功
 
         if (serverResponse.isSuccess()){//登陆成功后，保存登录状态
-            if (Const.USER_ROLE_ADMIN==1)
+            if (Const.USER_ROLE_ADMIN==0)
             {
-                session.setAttribute(Const.CURRENTUSER,serverResponse.getData());
+             return ServerResponse.createServerResponseByError("权限过低，禁止访问！");
             }
+            session.setAttribute(Const.CURRENTUSER,serverResponse.getData());
         }
         return serverResponse;
     }

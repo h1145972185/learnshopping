@@ -482,7 +482,6 @@ public class UserServiceImpl  implements IUserService {
      guava缓存的使用
      高服用服务对象的设计思想及抽象封装
      
-
  #### 封装返回前端的高服用对象
       class ServerResponse<T>{
         int status;//接口返回状态码
@@ -539,11 +538,6 @@ public class UserServiceImpl  implements IUserService {
    
  #### 注册
 ``` 
-    1：参数的非空校验
-    2：校验用户名是否存在
-    3：校验邮箱是否存在
-    4：调用dao接口插入用户信息
-    5：返回数据
     时间直接用mysql里面的方法now(),前端在进行注册的时间直接用时间函数就好,不用再传时间了
     枚举：一个变量它的值时有限的，就可以定义为枚举，开关，姓名
     密码密文应该写到注册接口，因为注册接口是往数据库里写数据
@@ -556,11 +550,7 @@ public class UserServiceImpl  implements IUserService {
        在注册时，页面会立刻有个反馈做时时的提示防止有恶意的调用接口，用ajax 异步加载调用接口返回数据
 ``` 
  #### 忘记密码之修改密码
-```
-    1：校验username--->查询找回密码问题
-    2：前端，提交问题答案
-    3：校验答案-->修改密码 
-    
+``` 
     修改密码的时候要考虑到一个越权问题
       横向越权：权限都是一样的，a用户去修改其他用户  
       纵向越权：低级别用户修改高级别用户的权限
@@ -581,16 +571,15 @@ public class UserServiceImpl  implements IUserService {
   
   ##### 提交问题答案
 ```  
-      1：参数非空校验
-      2：校验答案：根据username,question,answer查询，看看有没有这条记录
-      3：服务端生成一个token保存并将token返回给客户端
+  
+         服务端生成一个token保存并将token返回给客户端
          String user_Token=UUID.randomUUID().toString();
          UUID每次生成的字符串是唯一的，不会重复的
          guava cache
          TokenCache.put(username,user_Token);
          缓存里用key或取，key要保证他的唯一性，key就是用户，key直接用value就可以了
          这样就把token放到服务端的缓存里面了，同时要将token返回到客户端
-      4：返回结果
+   
 ```      
   ##### 修改密码
 ```  
@@ -642,8 +631,9 @@ public class UserServiceImpl  implements IUserService {
       根据categoryId查询类别
       修改类别
       返回结果
+   ```    
    #### 获取当前分类id及递归子节点categoryId
-   ```
+
 ```
        先定义一个递归的方法
          先查找本节点
@@ -655,4 +645,4 @@ public class UserServiceImpl  implements IUserService {
          递归的结束语句就是 categoryList==null&&categoryList.size()<=0
        1参数的非空校验
        2查询
-       ```
+   ```
