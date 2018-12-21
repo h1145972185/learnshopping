@@ -2,6 +2,7 @@ package com.neuedu.service;
 
 import com.neuedu.common.ServerResponse;
 import com.neuedu.pojo.Product;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -43,4 +44,21 @@ public interface IProductServic {
      */
     ServerResponse uploadPic(MultipartFile file, String path);
 
+
+
+    /**
+     * 前台-商品详情
+     * */
+       ServerResponse detail_portal(Integer productId);
+
+
+       /**
+        * 前台-搜索商品并排序
+        * */
+
+       ServerResponse list( Integer categoryId,
+                            String keyword,
+                            Integer pageNum,
+                            Integer pageSize,
+                            String orderBy);
 }

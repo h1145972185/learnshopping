@@ -100,6 +100,10 @@ public class UserServiceImpl  implements IUserService {
         return ServerResponse.createServerResponseBySucess(null, userInfo);
     }
 
+
+    /**
+     * 检验用户名是否有效
+     * */
     @Override
     public ServerResponse check_valid(String str, String type) {
         //step1 参数的非空校验
@@ -194,7 +198,7 @@ public class UserServiceImpl  implements IUserService {
         if (StringUtils.isBlank(username) || StringUtils.isBlank(passwordNew) || StringUtils.isBlank(forgetToken)) {
             return ServerResponse.createServerResponseByError(ResponseCode.PARAM_EMPTY.getStatus(), ResponseCode.PARAM_EMPTY.getMsg());
         }
-        // step4  校验token是否一致
+        // step2  校验token是否一致
         String token = TokenCache.get(username);
         if (StringUtils.isBlank(token)) {
             return ServerResponse.createServerResponseByError(ResponseCode.EXISTS_TOKEN.getStatus(), ResponseCode.EXISTS_TOKEN.getMsg());
@@ -259,10 +263,6 @@ public class UserServiceImpl  implements IUserService {
 
     }
 
-
-    /**
-     * 后台管理员登录
-     * */
 
 
 
